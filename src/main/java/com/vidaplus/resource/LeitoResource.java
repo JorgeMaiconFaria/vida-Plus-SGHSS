@@ -1,6 +1,7 @@
 package com.vidaplus.resource;
 
 import com.vidaplus.model.Leito;
+import com.vidaplus.model.StatusLeito;
 import com.vidaplus.service.LeitoService;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
@@ -8,6 +9,7 @@ import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import java.util.List;
+import java.util.Map;
 
 @Path("/leitos")
 @Produces(MediaType.APPLICATION_JSON)
@@ -57,16 +59,25 @@ public class LeitoResource {
     @PUT
     @Path("/{id}/status")
     @Transactional
-    public Response atualizarStatus(@PathParam("id") Long id, String novoStatus) {
+    public Response atualizarStatus(@PathParam("id") Long id,  Map<String, String> body) {
+        Leito leito = Leito.findById(id);
+        if (leito == null) {
+            return Response.status(Response.Status.NOT_FOUND).entity("Leito não encontrado").build();
+        }
+
+        String status = body.get("status");
+        if (status == null) {
+            return Response.status(Response.Status.BAD_REQUEST).entity("Campo 'status' é obrigatório.").build();
+        }
+
         try {
-            Leito.StatusLeito status = Leito.StatusLeito.valueOf(novoStatus.toUpperCase());
-            leitoService.atualizarStatus(id, status);
-            return Response.ok().build();
+            leito.status = StatusLeito.valueOf(status.trim().toUpperCase());
         } catch (IllegalArgumentException e) {
             return Response.status(Response.Status.BAD_REQUEST)
-                    .entity("Status inválido: " + novoStatus)
-                    .build();
+                    .entity("Status inválido. Use DISPONIVEL, OCUPADO ou MANUTENCAO.").build();
         }
+
+        return Response.ok(leito).build();
     }
 
     @DELETE

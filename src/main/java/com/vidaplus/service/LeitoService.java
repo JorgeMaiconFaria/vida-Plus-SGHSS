@@ -1,6 +1,7 @@
 package com.vidaplus.service;
 
 import com.vidaplus.model.Leito;
+import com.vidaplus.model.StatusLeito;
 import com.vidaplus.repository.LeitoRepository;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
@@ -29,7 +30,7 @@ public class LeitoService {
         leitoRepository.deleteById(id);
     }
 
-    public void atualizarStatus(Long id, Leito.StatusLeito novoStatus) {
+    public void atualizarStatus(Long id, StatusLeito novoStatus) {
         Leito leito = leitoRepository.findById(id);
         if (leito != null) {
             leito.status = novoStatus;

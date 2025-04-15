@@ -13,6 +13,4 @@ public class Leito extends PanacheEntity {
 
     @ManyToOne
     public Paciente paciente;
-
-    public enum StatusLeito { DISPONIVEL, OCUPADO, MANUTENCAO }
 }

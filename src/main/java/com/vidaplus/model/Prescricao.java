@@ -13,9 +13,9 @@ public class Prescricao extends PanacheEntity {
 
     public String medicamento;
     public String dosagem;
+
     @Lob
     public String instrucoes;
     public LocalDate dataPrescricao;
-
     public LocalDateTime createdAt = LocalDateTime.now();
 }

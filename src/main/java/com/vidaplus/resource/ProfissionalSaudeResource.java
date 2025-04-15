@@ -1,5 +1,7 @@
 package com.vidaplus.resource;
 
+import com.vidaplus.dto.ProfissionalSaudeDTO;
+import com.vidaplus.mapper.ProfissionalSaudeMapper;
 import com.vidaplus.model.ProfissionalSaude;
 import com.vidaplus.service.ProfissionalSaudeService;
 import jakarta.inject.Inject;
@@ -14,55 +16,55 @@ import java.util.List;
 @Consumes(MediaType.APPLICATION_JSON)
 public class ProfissionalSaudeResource {
 
-    @Inject
-    ProfissionalSaudeService profissionalService;
-
     @GET
-    public List<ProfissionalSaude> listarTodos() {
-        return profissionalService.listarTodos();
+    public List<ProfissionalSaudeDTO> listar() {
+        List<ProfissionalSaude> profissionais = ProfissionalSaude.listAll();
+        return ProfissionalSaudeMapper.toDTOList(profissionais);
     }
 
     @GET
     @Path("/{id}")
-    public Response buscarPorId(@PathParam("id") Long id) {
-        ProfissionalSaude profissional = profissionalService.buscarPorId(id);
-        if (profissional != null) {
-            return Response.ok(profissional).build();
-        } else {
+    public Response buscar(@PathParam("id") Long id) {
+        ProfissionalSaude profissional = ProfissionalSaude.findById(id);
+        if (profissional == null) {
             return Response.status(Response.Status.NOT_FOUND).build();
         }
+        return Response.ok(ProfissionalSaudeMapper.toDTO(profissional)).build();
     }
 
     @POST
     @Transactional
-    public Response salvar(ProfissionalSaude profissional) {
-        profissionalService.salvar(profissional);
-        return Response.status(Response.Status.CREATED).entity(profissional).build();
+    public Response criar(ProfissionalSaudeDTO dto) {
+        ProfissionalSaude profissional = ProfissionalSaudeMapper.toEntity(dto);
+        profissional.persist();
+        return Response.status(Response.Status.CREATED).entity(ProfissionalSaudeMapper.toDTO(profissional)).build();
     }
 
     @PUT
     @Path("/{id}")
     @Transactional
-    public Response atualizar(@PathParam("id") Long id, ProfissionalSaude atualizado) {
-        ProfissionalSaude existente = profissionalService.buscarPorId(id);
-        if (existente != null) {
-            existente.nome = atualizado.nome;
-            existente.especialidade = atualizado.especialidade;
-            existente.crmCoren = atualizado.crmCoren;
-            existente.email = atualizado.email;
-            existente.telefone = atualizado.telefone;
-            return Response.ok(existente).build();
-        } else {
+    public Response atualizar(@PathParam("id") Long id, ProfissionalSaudeDTO dto) {
+        ProfissionalSaude profissional = ProfissionalSaude.findById(id);
+        if (profissional == null) {
             return Response.status(Response.Status.NOT_FOUND).build();
         }
+
+        profissional.nome = dto.nome;
+        profissional.crmCoren = dto.crmCoren;
+        profissional.especialidade = dto.especialidade;
+        profissional.email = dto.email;
+        profissional.telefone = dto.telefone;
+        profissional.criadoEm = dto.criadoEm;
+
+        return Response.ok(ProfissionalSaudeMapper.toDTO(profissional)).build();
     }
 
     @DELETE
     @Path("/{id}")
     @Transactional
     public Response deletar(@PathParam("id") Long id) {
-        profissionalService.deletar(id);
-        return Response.noContent().build();
+        boolean deleted = ProfissionalSaude.deleteById(id);
+        return deleted ? Response.noContent().build() : Response.status(Response.Status.NOT_FOUND).build();
     }
 }
 
