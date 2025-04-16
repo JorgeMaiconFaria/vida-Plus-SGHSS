@@ -1,5 +1,7 @@
 package com.vidaplus.resource;
 
+import com.vidaplus.dto.ProntuarioDTO;
+import com.vidaplus.mapper.ProntuarioMapper;
 import com.vidaplus.model.Prontuario;
 import com.vidaplus.model.Paciente;
 import com.vidaplus.model.ProfissionalSaude;
@@ -17,48 +19,48 @@ import java.util.List;
 public class ProntuarioResource {
 
     @GET
-    public List<Prontuario> listar() {
-        return Prontuario.listAll();
+    public List<ProntuarioDTO> listar() {
+        return ProntuarioMapper.toDTOList(Prontuario.listAll());
     }
 
     @GET
     @Path("/{id}")
-    public Prontuario buscar(@PathParam("id") Long id) {
-        return Prontuario.findById(id);
+    public Response buscar(@PathParam("id") Long id) {
+        Prontuario prontuario = Prontuario.findById(id);
+        if (prontuario == null) {
+            return Response.status(Response.Status.NOT_FOUND).build();
+        }
+        return Response.ok(ProntuarioMapper.toDTO(prontuario)).build();
     }
 
     @POST
     @Transactional
-    public Response criar(Prontuario prontuario) {
-        Paciente paciente = Paciente.findById(prontuario.paciente.id);
-        ProfissionalSaude profissional = ProfissionalSaude.findById(prontuario.profissional.id);
-
-        if (paciente == null || profissional == null) {
+    public Response criar(ProntuarioDTO dto) {
+        if (dto.pacienteId == null || dto.profissionalId == null) {
             return Response.status(Response.Status.BAD_REQUEST)
-                    .entity("Paciente ou Profissional não encontrado.")
-                    .build();
+                    .entity("Paciente ou Profissional não informado.").build();
         }
 
-        prontuario.paciente = paciente;
-        prontuario.profissional = profissional;
+        Prontuario prontuario = ProntuarioMapper.toEntity(dto);
         prontuario.persist();
-        return Response.status(Response.Status.CREATED).entity(prontuario).build();
+
+        return Response.status(Response.Status.CREATED)
+                .entity(ProntuarioMapper.toDTO(prontuario)).build();
     }
 
     @PUT
     @Path("/{id}")
     @Transactional
-    public Response atualizar(@PathParam("id") Long id, Prontuario atualizado) {
-        Prontuario prontuarioExistente = Prontuario.findById(id);
-        if (prontuarioExistente == null) {
+    public Response atualizar(@PathParam("id") Long id, ProntuarioDTO dto) {
+        Prontuario prontuario = Prontuario.findById(id);
+        if (prontuario == null) {
             return Response.status(Response.Status.NOT_FOUND).entity("Prontuário não encontrado").build();
         }
 
-        // Atualiza apenas os campos permitidos
-        prontuarioExistente.descricao = atualizado.descricao;
-        prontuarioExistente.data = atualizado.data;
+        prontuario.descricao = dto.descricao;
+        prontuario.data = dto.data;
 
-        return Response.ok(prontuarioExistente).build();
+        return Response.ok(ProntuarioMapper.toDTO(prontuario)).build();
     }
 
     @DELETE
@@ -66,10 +68,6 @@ public class ProntuarioResource {
     @Transactional
     public Response deletar(@PathParam("id") Long id) {
         boolean deleted = Prontuario.deleteById(id);
-        if (deleted) {
-            return Response.noContent().build();
-        } else {
-            return Response.status(Response.Status.NOT_FOUND).build();
-        }
+        return deleted ? Response.noContent().build() : Response.status(Response.Status.NOT_FOUND).build();
     }
 }

@@ -1,5 +1,7 @@
 package com.vidaplus.resource;
 
+import com.vidaplus.dto.ConsultaDTO;
+import com.vidaplus.mapper.ConsultaMapper;
 import com.vidaplus.model.Consulta;
 import com.vidaplus.service.ConsultaService;
 import jakarta.inject.Inject;
@@ -20,8 +22,9 @@ public class ConsultaResource {
     ConsultaService consultaService;
 
     @GET
-    public List<Consulta> listarTodas() {
-        return consultaService.listarTodas();
+    public List<ConsultaDTO> listarTodas() {
+        List<Consulta> consultas = consultaService.listarTodas();
+        return ConsultaMapper.toDTOList(consultas);
     }
 
     @GET
@@ -29,7 +32,7 @@ public class ConsultaResource {
     public Response buscarPorId(@PathParam("id") Long id) {
         Consulta consulta = consultaService.buscarPorId(id);
         if (consulta != null) {
-            return Response.ok(consulta).build();
+            return Response.ok(ConsultaMapper.toDTO(consulta)).build();
         } else {
             return Response.status(Response.Status.NOT_FOUND).build();
         }
@@ -37,9 +40,10 @@ public class ConsultaResource {
 
     @POST
     @Transactional
-    public Response salvar(Consulta consulta) {
+    public Response salvar(ConsultaDTO dto) {
+        Consulta consulta = ConsultaMapper.toEntity(dto);
         consultaService.salvar(consulta);
-        return Response.status(Response.Status.CREATED).entity(consulta).build();
+        return Response.status(Response.Status.CREATED).entity(ConsultaMapper.toDTO(consulta)).build();
     }
 
     @PUT
