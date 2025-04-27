@@ -3,10 +3,14 @@ package com.vidaplus.resource;
 import com.vidaplus.dto.LeitoDTO;
 import com.vidaplus.mapper.LeitoMapper;
 import com.vidaplus.model.Leito;
+import com.vidaplus.util.DateUtil;
+import io.quarkus.logging.Log;
 import jakarta.transaction.Transactional;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
+
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -17,6 +21,7 @@ public class LeitoResource {
 
     @GET
     public List<LeitoDTO> listar() {
+        Log.info("Listagem de leitos realizada às %s.".formatted(DateUtil.format(LocalDateTime.now())));
         return Leito.<Leito>listAll()
                 .stream()
                 .map(LeitoMapper::toDTO)
@@ -27,8 +32,12 @@ public class LeitoResource {
     @Path("/{id}")
     public Response buscar(@PathParam("id") Long id) {
         Leito leito = Leito.findById(id);
-        if (leito == null) return Response.status(Response.Status.NOT_FOUND).build();
-        return Response.ok(LeitoMapper.toDTO(leito)).build();
+        if (leito != null){
+            Log.info("Leito ID %d buscado às %s..".formatted(id, DateUtil.format(LocalDateTime.now())));
+            return Response.ok(LeitoMapper.toDTO(leito)).build();
+        }
+        Log.error("Leito ID %d não encontrado às %s.".formatted(id, DateUtil.format(LocalDateTime.now())));
+        return Response.status(Response.Status.NOT_FOUND).build();
     }
 
     @POST

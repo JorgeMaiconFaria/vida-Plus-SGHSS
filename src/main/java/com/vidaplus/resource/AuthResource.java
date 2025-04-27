@@ -1,6 +1,6 @@
 package com.vidaplus.resource;
 
-import com.vidaplus.auth.Usuario;
+import com.vidaplus.model.Usuario;
 import com.vidaplus.service.JwtService;
 import io.smallrye.jwt.build.Jwt;
 import jakarta.inject.Inject;
@@ -20,17 +20,28 @@ public class AuthResource {
     @Inject
     JwtService jwtService;
 
+    public static class LoginRequest {
+        public String email;
+        public String senha;
+    }
+
     @POST
     @Path("/login")
-    public Response login(Usuario usuario) {
-        // Aqui faremos uma validação simples (você pode depois conectar com o banco)
-        if ("admin@vidaplus.com".equals(usuario.email) && "admin123".equals(usuario.senha)) {
-            // Em vez de criar o token manualmente, utilizamos o JwtService
-            String token = jwtService.gerarToken(usuario.email, "ADMIN");
+    public Response login(LoginRequest login) {
+        Usuario usuario = Usuario.find("email", login.email).firstResult();
 
-            return Response.ok().entity("{\"token\":\"" + token + "\"}").build();
+        if (usuario == null || !usuario.senha.equals(login.senha)) {
+            return Response.status(Response.Status.UNAUTHORIZED).build();
         }
 
-        return Response.status(Response.Status.UNAUTHORIZED).build();
+        Set<String> roles = new HashSet<>(usuario.roles);
+
+        String token = Jwt.issuer("vidaplus-auth")
+                .upn(usuario.email)
+                .groups(roles)
+                .expiresIn(Duration.ofHours(2))
+                .sign();
+
+        return Response.ok().entity("{\"token\":\"" + token + "\"}").build();
     }
 }

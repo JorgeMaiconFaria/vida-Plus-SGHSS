@@ -1,5 +1,8 @@
 package com.vidaplus.dto;
 
+import com.vidaplus.model.StatusConsulta;
+import com.vidaplus.model.TipoConsulta;
+
 import java.time.LocalDateTime;
 
 public class ConsultaDTO {

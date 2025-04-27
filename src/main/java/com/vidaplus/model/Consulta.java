@@ -21,6 +21,4 @@ public class Consulta extends PanacheEntity {
     public StatusConsulta status;
 
     public LocalDateTime createdAt = LocalDateTime.now();
-    public enum TipoConsulta { PRESENCIAL, TELEMEDICINA }
-    public enum StatusConsulta { AGENDADA, REALIZADA, CANCELADA }
 }
