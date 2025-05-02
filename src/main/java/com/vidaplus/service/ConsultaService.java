@@ -1,13 +1,13 @@
 package com.vidaplus.service;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.vidaplus.dto.ConsutaUpdateDTO;
 import com.vidaplus.model.Consulta;
 import com.vidaplus.model.StatusConsulta;
 import com.vidaplus.repository.ConsultaRepository;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 @ApplicationScoped
@@ -16,7 +16,7 @@ public class ConsultaService {
     @Inject
     ConsultaRepository consultaRepository;
 
-    public List<Consulta> listarTodas() {
+    public List<Consulta> listar() {
         return consultaRepository.listAll();
     }
 
@@ -32,19 +32,18 @@ public class ConsultaService {
         consultaRepository.deleteById(id);
     }
 
-    @JsonProperty("statusConsulta")
-    public void atualizarStatus(Long id, StatusConsulta novoStatus) {
+    public Consulta atualizarStatus(Long id, ConsutaUpdateDTO dto) {
         Consulta consulta = consultaRepository.findById(id);
-        if (consulta != null) {
-            consulta.status = novoStatus;
-        }
+        if (consulta != null && dto.status != null) consulta.status = StatusConsulta.valueOf(dto.status);
+
+        return consulta;
     }
 
-    public void atualizarDataHora(Long id, LocalDateTime novaDataHora) {
-        Consulta consulta = Consulta.findById(id);
-        if (consulta != null) {
-            consulta.dataHora = novaDataHora;
-        }
+    public Consulta atualizarDataHora(Long id, ConsutaUpdateDTO dto) {
+        Consulta consulta = consultaRepository.findById(id);
+        if (consulta != null) consulta.dataHora = dto.dataHora;
+
+        return consulta;
     }
 }
 

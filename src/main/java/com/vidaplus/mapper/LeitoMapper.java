@@ -1,9 +1,14 @@
 package com.vidaplus.mapper;
 
+import com.vidaplus.dto.ConsultaDTO;
 import com.vidaplus.dto.LeitoDTO;
+import com.vidaplus.model.Consulta;
 import com.vidaplus.model.Leito;
 import com.vidaplus.model.Paciente;
 import com.vidaplus.model.StatusLeito;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 public class LeitoMapper {
 
@@ -37,5 +42,9 @@ public class LeitoMapper {
         } else {
             leito.paciente = null;
         }
+    }
+
+    public static List<LeitoDTO> toDTOList(List<Leito> leitos) {
+        return leitos.stream().map(LeitoMapper::toDTO).collect(Collectors.toList());
     }
 }

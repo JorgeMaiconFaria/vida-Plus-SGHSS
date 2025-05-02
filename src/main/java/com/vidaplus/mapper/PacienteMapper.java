@@ -1,9 +1,13 @@
 package com.vidaplus.mapper;
 
+import com.vidaplus.dto.LeitoDTO;
 import com.vidaplus.dto.PacienteDTO;
+import com.vidaplus.model.Leito;
 import com.vidaplus.model.Paciente;
 
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.stream.Collectors;
 
 public class PacienteMapper {
 
@@ -29,5 +33,9 @@ public class PacienteMapper {
         paciente.telefone = dto.telefone;
         paciente.criadoEm = dto.criadoEm != null ? dto.criadoEm : LocalDateTime.now();
         return paciente;
+    }
+
+    public static List<PacienteDTO> toDTOList(List<Paciente> pacientes) {
+        return pacientes.stream().map(PacienteMapper::toDTO).collect(Collectors.toList());
     }
 }

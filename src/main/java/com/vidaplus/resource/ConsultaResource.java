@@ -1,9 +1,9 @@
 package com.vidaplus.resource;
 
 import com.vidaplus.dto.ConsultaDTO;
+import com.vidaplus.dto.ConsutaUpdateDTO;
 import com.vidaplus.mapper.ConsultaMapper;
 import com.vidaplus.model.Consulta;
-import com.vidaplus.model.StatusConsulta;
 import com.vidaplus.service.ConsultaService;
 import com.vidaplus.util.DateUtil;
 import io.quarkus.logging.Log;
@@ -26,8 +26,8 @@ public class ConsultaResource {
     ConsultaService consultaService;
 
     @GET
-    public List<ConsultaDTO> listarTodas() {
-        List<Consulta> consultas = consultaService.listarTodas();
+    public List<ConsultaDTO> listar() {
+        List<Consulta> consultas = consultaService.listar();
         Log.info("Listagem de consultas realizada às %s.".formatted(DateUtil.format(LocalDateTime.now())));
         return ConsultaMapper.toDTOList(consultas);
     }
@@ -62,33 +62,29 @@ public class ConsultaResource {
     @PUT
     @Path("/{id}/status")
     @Transactional
-    public Response atualizarStatus(@PathParam("id") Long id, String novoStatus) {
+    public Response atualizarStatus(@PathParam("id") Long id, ConsutaUpdateDTO dto) {
         try {
-            StatusConsulta status = StatusConsulta.valueOf(novoStatus.toUpperCase());
-            consultaService.atualizarStatus(id, status);
-            Log.info("Status da consulta ID %d atualizado para %s às %s.".formatted(id, novoStatus, DateUtil.format(LocalDateTime.now())));
-            return Response.ok().build();
+            Consulta consultaAtualizada = consultaService.atualizarStatus(id, dto);
+            Log.info("Status da consulta ID %d atualizado para %s às %s.".formatted(id, dto.status, DateUtil.format(LocalDateTime.now())));
+            return Response.ok(ConsultaMapper.toDTO(consultaAtualizada)).build();
         } catch (IllegalArgumentException e) {
             Log.error("Erro ao atualizar o status da Consulta: ".concat(e.getMessage()));
-            return Response.status(Response.Status.BAD_REQUEST)
-                    .entity("Status inválido: " + novoStatus)
-                    .build();
+            return Response.status(Response.Status.BAD_REQUEST).entity("Status inválido: " + dto.status).build();
         }
     }
 
     @PUT
     @Path("/{id}/data")
     @Transactional
-    public Response atualizarData(@PathParam("id") Long id, String novaDataHora) {
+    public Response atualizarData(@PathParam("id") Long id, ConsutaUpdateDTO dto) {
         try {
-            LocalDateTime dataHora = LocalDateTime.parse(novaDataHora);
-            consultaService.atualizarDataHora(id, dataHora);
-            Log.info("Horário da consulta ID %d atualizado para %s às %s.".formatted(id, DateUtil.format(dataHora), DateUtil.format(LocalDateTime.now())));
-            return Response.ok().build();
+            Consulta consultaAtualizada = consultaService.atualizarDataHora(id, dto);
+            Log.info("Horário da consulta ID %d atualizado para %s às %s.".formatted(id, DateUtil.format(dto.dataHora), DateUtil.format(LocalDateTime.now())));
+            return Response.ok(ConsultaMapper.toDTO(consultaAtualizada)).build();
         } catch (Exception e) {
             Log.error("Erro ao atualizar o horário da Consulta: ".concat(e.getMessage()));
             return Response.status(Response.Status.BAD_REQUEST)
-                    .entity("Data e hora inválida: " + novaDataHora)
+                    .entity("Data e hora inválida: " + dto.dataHora)
                     .build();
         }
     }

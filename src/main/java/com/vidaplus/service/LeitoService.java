@@ -1,6 +1,8 @@
 package com.vidaplus.service;
 
+import com.vidaplus.dto.LeitoUpdateDTO;
 import com.vidaplus.model.Leito;
+import com.vidaplus.model.Paciente;
 import com.vidaplus.model.StatusLeito;
 import com.vidaplus.repository.LeitoRepository;
 import jakarta.enterprise.context.ApplicationScoped;
@@ -14,7 +16,7 @@ public class LeitoService {
     @Inject
     LeitoRepository leitoRepository;
 
-    public List<Leito> listarTodos() {
+    public List<Leito> listar() {
         return leitoRepository.listAll();
     }
 
@@ -30,10 +32,14 @@ public class LeitoService {
         leitoRepository.deleteById(id);
     }
 
-    public void atualizarStatus(Long id, StatusLeito novoStatus) {
+    public Leito atualizar(Long id, LeitoUpdateDTO dto) {
         Leito leito = leitoRepository.findById(id);
         if (leito != null) {
-            leito.status = novoStatus;
+            if (dto.status != null) leito.status = StatusLeito.valueOf(dto.status);
+            if (dto.pacienteId != null) leito.paciente = Paciente.findById(dto.pacienteId);
         }
+
+        return leito;
     }
+
 }
