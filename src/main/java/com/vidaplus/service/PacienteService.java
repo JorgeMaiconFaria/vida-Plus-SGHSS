@@ -1,6 +1,5 @@
 package com.vidaplus.service;
 
-import com.vidaplus.dto.PacienteDTO;
 import com.vidaplus.dto.PacienteUpdateDTO;
 import com.vidaplus.model.Paciente;
 import com.vidaplus.repository.PacienteRepository;
@@ -33,11 +32,11 @@ public class PacienteService {
             return null;
         }
 
-        if (dto.nome != null) paciente.nome = dto.nome;
-        if (dto.dataNascimento != null) paciente.dataNascimento = dto.dataNascimento;
-        if (dto.cpf != null) paciente.cpf = dto.cpf;
-        if (dto.email != null) paciente.email = dto.email;
-        if (dto.telefone != null) paciente.telefone = dto.telefone;
+        if (dto.getNome() != null) paciente.setNome(dto.getNome());
+        if (dto.getDataNascimento() != null) paciente.setDataNascimento(dto.getDataNascimento());
+        if (dto.getCpf() != null) paciente.setCpf(dto.getCpf());
+        if (dto.getEmail() != null) paciente.setEmail(dto.getEmail());
+        if (dto.getTelefone() != null) paciente.setTelefone(dto.getTelefone());
 
         return paciente;
     }

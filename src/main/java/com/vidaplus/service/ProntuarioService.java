@@ -32,10 +32,10 @@ public class ProntuarioService {
         Prontuario prontuarioAtualizado = prontuarioRepository.findById(id);
 
         if(prontuarioAtualizado != null) {
-            if(dto.descricao != null) prontuarioAtualizado.descricao = dto.descricao;
-            if(dto.data != null) prontuarioAtualizado.data = dto.data;
-            if(dto.pacienteId != null) prontuarioAtualizado.paciente = Paciente.findById(dto.pacienteId);
-            if(dto.profissionalId != null) prontuarioAtualizado.profissional = ProfissionalSaude.findById(dto.profissionalId);
+            if(dto.getDescricao() != null) prontuarioAtualizado.setDescricao(dto.getDescricao());
+            if(dto.getData() != null) prontuarioAtualizado.setData(dto.getData());
+            if(dto.getPacienteId() != null) prontuarioAtualizado.setPaciente(Paciente.findById(dto.getPacienteId()));
+            if(dto.getProfissionalId() != null) prontuarioAtualizado.setProfissional(ProfissionalSaude.findById(dto.getProfissionalId()));
         }
 
         return prontuarioRepository.findById(id);

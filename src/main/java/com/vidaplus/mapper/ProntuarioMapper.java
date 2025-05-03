@@ -12,21 +12,21 @@ public class ProntuarioMapper {
 
     public static ProntuarioDTO toDTO(Prontuario prontuario) {
         ProntuarioDTO dto = new ProntuarioDTO();
-        dto.id = prontuario.id;
-        dto.descricao = prontuario.descricao;
-        dto.data = prontuario.data;
-        dto.pacienteId = prontuario.paciente != null ? prontuario.paciente.id : null;
-        dto.profissionalId = prontuario.profissional != null ? prontuario.profissional.id : null;
+        dto.setId(prontuario.id);
+        dto.setDescricao(prontuario.getDescricao());
+        dto.setData(prontuario.getData());
+        dto.setPacienteId(prontuario.getPaciente() != null ? prontuario.getPaciente().id : null);
+        dto.setProfissionalId(prontuario.getProfissional() != null ? prontuario.getProfissional().id : null);
+
         return dto;
     }
 
     public static Prontuario toEntity(ProntuarioDTO dto) {
         Prontuario prontuario = new Prontuario();
-        prontuario.descricao = dto.descricao;
-        prontuario.data = dto.data;
-
-        prontuario.paciente = dto.pacienteId != null ? Paciente.findById(dto.pacienteId) : null;
-        prontuario.profissional = dto.profissionalId != null ? ProfissionalSaude.findById(dto.profissionalId) : null;
+        prontuario.setDescricao(dto.getDescricao());
+        prontuario.setData(dto.getData());
+        prontuario.setPaciente(dto.getPacienteId() != null ? Paciente.findById(dto.getPacienteId()) : null);
+        prontuario.setProfissional(dto.getProfissionalId() != null ? ProfissionalSaude.findById(dto.getProfissionalId()) : null);
 
         return prontuario;
     }

@@ -31,11 +31,11 @@ public class PrescricaoService {
     public Prescricao atualizar(Long id, PrescricaoUpdateDTO dto) {
         Prescricao prescricao = prescricaoRepository.findById(id);
         if(prescricao != null) {
-            if (dto.medicamento != null) prescricao.medicamento = dto.medicamento;
-            if (dto.posologia != null) prescricao.posologia = dto.posologia;
-            if (dto.dataHora != null) prescricao.dataHora = dto.dataHora;
-            if (dto.pacienteId != null) prescricao.paciente = Paciente.findById(dto.pacienteId);
-            if (dto.profissionalId != null) prescricao.profissional = ProfissionalSaude.findById(dto.profissionalId);
+            if (dto.getMedicamento() != null) prescricao.setMedicamento(dto.getMedicamento());
+            if (dto.getPosologia() != null) prescricao.setPosologia(dto.getPosologia());
+            if (dto.getDataHora() != null) prescricao.setDataHora(dto.getDataHora());
+            if (dto.getPacienteId() != null) prescricao.setPaciente(Paciente.findById(dto.getPacienteId()));
+            if (dto.getProfissionalId() != null) prescricao.setProfissional(ProfissionalSaude.findById(dto.getProfissionalId()));
         }
 
         return prescricao;

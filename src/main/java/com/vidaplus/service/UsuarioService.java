@@ -1,11 +1,6 @@
 package com.vidaplus.service;
 
-import com.vidaplus.dto.ProntuarioUpdateDTO;
-import com.vidaplus.dto.UsuarioDTO;
 import com.vidaplus.dto.UsuarioUpdateDTO;
-import com.vidaplus.model.Paciente;
-import com.vidaplus.model.ProfissionalSaude;
-import com.vidaplus.model.Prontuario;
 import com.vidaplus.model.Usuario;
 import com.vidaplus.repository.UsuarioRepository;
 import jakarta.enterprise.context.ApplicationScoped;
@@ -35,9 +30,9 @@ public class UsuarioService {
         Usuario usuarioAtualizado = usuarioRepository.findById(id);
 
         if(usuarioAtualizado != null) {
-            if(dto.email != null) usuarioAtualizado.email = dto.email;
-            if(dto.senha != null) usuarioAtualizado.senha = dto.senha;
-            if(dto.roles != null) usuarioAtualizado.roles = dto.roles;
+            if(dto.getEmail() != null) usuarioAtualizado.setEmail(dto.getEmail());
+            if(dto.getSenha() != null) usuarioAtualizado.setSenha(dto.getSenha());
+            if(dto.getRoles() != null) usuarioAtualizado.setRoles(dto.getRoles());
         }
 
         return usuarioRepository.findById(id);

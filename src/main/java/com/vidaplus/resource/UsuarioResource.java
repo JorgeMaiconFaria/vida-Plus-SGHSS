@@ -9,6 +9,7 @@ import com.vidaplus.util.DateUtil;
 import io.quarkus.logging.Log;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
+import jakarta.validation.Valid;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
@@ -46,7 +47,7 @@ public class UsuarioResource {
 
     @POST
     @Transactional
-    public Response salvar(UsuarioDTO usuarioDTO) {
+    public Response salvar(@Valid UsuarioDTO usuarioDTO) {
         try {
             Usuario usuario = UsuarioMapper.toEntity(usuarioDTO);
             usuarioService.salvar(usuario);
@@ -65,7 +66,7 @@ public class UsuarioResource {
         try {
             Usuario usuarioAtualizado = usuarioService.atualizar(id, dto);
             if (usuarioAtualizado != null) {
-                Log.info("Profissional da saúde ID %d atualizado com sucesso às %s.".formatted(id, DateUtil.format(LocalDateTime.now())));
+                Log.info("Usuário ID %d atualizado com sucesso às %s.".formatted(id, DateUtil.format(LocalDateTime.now())));
                 return Response.ok(UsuarioMapper.toDTO(usuarioAtualizado)).build();
             }
 

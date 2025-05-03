@@ -1,8 +1,6 @@
 package com.vidaplus.mapper;
 
-import com.vidaplus.dto.ConsultaDTO;
 import com.vidaplus.dto.LeitoDTO;
-import com.vidaplus.model.Consulta;
 import com.vidaplus.model.Leito;
 import com.vidaplus.model.Paciente;
 import com.vidaplus.model.StatusLeito;
@@ -14,33 +12,33 @@ public class LeitoMapper {
 
     public static LeitoDTO toDTO(Leito leito) {
         LeitoDTO dto = new LeitoDTO();
-        dto.id = leito.id;
-        dto.numero = leito.numero;
-        dto.status = leito.status.name();
-        dto.pacienteId = leito.paciente != null ? leito.paciente.id : null;
+        dto.setId(leito.id);
+        dto.setNumero(leito.getNumero());
+        dto.setStatus(leito.getStatus().name());
+        dto.setPacienteId(leito.getPaciente() != null ? leito.getPaciente().id : null);
         return dto;
     }
 
     public static Leito toEntity(LeitoDTO dto) {
         Leito leito = new Leito();
-        leito.numero = dto.numero;
-        leito.status = StatusLeito.valueOf(dto.status.toUpperCase());
+        leito.setNumero(dto.getNumero());
+        leito.setStatus(StatusLeito.valueOf(dto.getStatus().toUpperCase()));
 
-        if (dto.pacienteId != null) {
-            leito.paciente = Paciente.findById(dto.pacienteId);
+        if (dto.getPacienteId() != null) {
+            leito.setPaciente(Paciente.findById(dto.getPacienteId()));
         }
 
         return leito;
     }
 
     public static void updateEntity(Leito leito, LeitoDTO dto) {
-        leito.numero = dto.numero;
-        leito.status = StatusLeito.valueOf(dto.status.toUpperCase());
+        leito.setNumero(dto.getNumero());
+        leito.setStatus(StatusLeito.valueOf(dto.getStatus().toUpperCase()));
 
-        if (dto.pacienteId != null) {
-            leito.paciente = Paciente.findById(dto.pacienteId);
+        if (dto.getPacienteId() != null) {
+            leito.setPaciente(Paciente.findById(dto.getPacienteId()));
         } else {
-            leito.paciente = null;
+            leito.setPaciente(null);
         }
     }
 

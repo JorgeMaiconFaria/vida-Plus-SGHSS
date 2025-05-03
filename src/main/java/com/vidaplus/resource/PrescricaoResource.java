@@ -35,6 +35,7 @@ public class PrescricaoResource {
     @Path("/{id}")
     public Response buscarPorId(@PathParam("id") Long id) {
         Prescricao prescricao = prescricaoService.buscarPorId(id);
+
         if (prescricao != null) {
             Log.info("Prescrição ID %d buscada às %s.".formatted(id, DateUtil.format(LocalDateTime.now())));
             return Response.ok(PrescricaoMapper.toDTO(prescricao)).build();
@@ -62,6 +63,7 @@ public class PrescricaoResource {
     @Transactional
     public Response atualizar(@PathParam("id") Long id, PrescricaoUpdateDTO dto) {
         Prescricao prescricao = prescricaoService.atualizar(id, dto);
+
         if (prescricao == null) {
             Log.error("Prescrição ID %d não encontrada às %s.".formatted(id, DateUtil.format(LocalDateTime.now())));
             return Response.status(Response.Status.NOT_FOUND).build();

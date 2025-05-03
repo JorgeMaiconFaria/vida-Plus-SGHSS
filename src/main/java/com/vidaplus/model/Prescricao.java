@@ -2,18 +2,23 @@ package com.vidaplus.model;
 
 import io.quarkus.hibernate.orm.panache.PanacheEntity;
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Entity
+@Getter
+@Setter
 public class Prescricao extends PanacheEntity {
-    public String medicamento;
-    public String posologia;
-    public LocalDateTime dataHora;
+    private String medicamento;
+    private String posologia;
+    private LocalDateTime dataHora;
 
     @ManyToOne
-    public Paciente paciente;
+    private Paciente paciente;
 
     @ManyToOne
-    public ProfissionalSaude profissional;
+    private ProfissionalSaude profissional;
 }

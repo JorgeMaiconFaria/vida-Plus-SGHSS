@@ -9,7 +9,9 @@ import com.vidaplus.service.PacienteService;
 import com.vidaplus.util.DateUtil;
 import io.quarkus.logging.Log;
 import jakarta.inject.Inject;
+import jakarta.persistence.PersistenceException;
 import jakarta.transaction.Transactional;
+import jakarta.validation.Valid;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
@@ -43,6 +45,7 @@ public class PacienteResource {
             Log.info("Paciente ID %d buscado às %s.".formatted(id, DateUtil.format(LocalDateTime.now())));
             return Response.ok(PacienteMapper.toDTO(paciente)).build();
         }
+
         Log.error("Paciente ID %d não encontrado às %s.".formatted(id, DateUtil.format(LocalDateTime.now())));
         return Response.status(Response.Status.NOT_FOUND).build();
     }
@@ -50,36 +53,26 @@ public class PacienteResource {
     @POST
     @Transactional
     //@RolesAllowed("ADMIN")
-    public Response criar(PacienteDTO dto) {
-        try{
-            Paciente paciente = PacienteMapper.toEntity(dto);
-            pacienteService.salvar(paciente);
-            Log.info("Paciente ID %d criada com sucesso às %s.".formatted(paciente.id, DateUtil.format(LocalDateTime.now())));
-            return Response.status(Response.Status.CREATED).entity(PacienteMapper.toDTO(paciente)).build();
-        } catch (Exception e) {
-            Log.error("Erro ao criar paciente: %s às %s".formatted(e.getMessage(), DateUtil.format(LocalDateTime.now())));
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
-        }
+    public Response salvar(@Valid PacienteDTO dto) {
+        Paciente paciente = PacienteMapper.toEntity(dto);
+        pacienteService.salvar(paciente);
+        Log.info("Paciente ID %d criada com sucesso às %s.".formatted(paciente.id, DateUtil.format(LocalDateTime.now())));
+        return Response.status(Response.Status.CREATED).entity(PacienteMapper.toDTO(paciente)).build();
     }
 
     @PUT
     @Path("/{id}")
     @Transactional
     //@RolesAllowed("ADMIN")
-    public Response atualizar(@PathParam("id") Long id, PacienteUpdateDTO dto) {
-        try{
-            Paciente pacienteAtualizado = pacienteService.atualizar(id, dto);
-            if (pacienteAtualizado == null) {
-                Log.error("Paciente ID %d não encontrado às %s.".formatted(id, DateUtil.format(LocalDateTime.now())));
-                return Response.status(Response.Status.NOT_FOUND).build();
-            }
-
+    public Response atualizar(@PathParam("id") Long id,@Valid PacienteUpdateDTO dto) {
+        Paciente pacienteAtualizado = pacienteService.atualizar(id, dto);
+        if (pacienteAtualizado != null) {
             Log.info("Paciente ID %d atualizado com sucesso às %s.".formatted(id, DateUtil.format(LocalDateTime.now())));
             return Response.ok(PacienteMapper.toDTO(pacienteAtualizado)).build();
-        } catch (Exception e) {
-            Log.error("Erro ao atualizar paciente ID %s às %s".formatted(e.getMessage(), DateUtil.format(LocalDateTime.now())));
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
         }
+
+        Log.error("Paciente ID %d não encontrado às %s.".formatted(id, DateUtil.format(LocalDateTime.now())));
+        return Response.status(Response.Status.NOT_FOUND).build();
     }
 
     @DELETE

@@ -30,10 +30,10 @@ public class ProfissionalSaudeService {
         ProfissionalSaude profissionalSaude = profissionalRepository.findById(id);
 
         if(profissionalSaude != null) {
-            if (dto.nome != null) profissionalSaude.nome = dto.nome;
-            if (dto.crmCoren != null) profissionalSaude.crmCoren = dto.crmCoren;
-            if (dto.especialidade != null) profissionalSaude.especialidade = dto.especialidade;
-            if (dto.telefone != null) profissionalSaude.telefone = dto.telefone;
+            if (dto.getNome() != null) profissionalSaude.setNome(dto.getNome());
+            if (dto.getCrmCoren() != null) profissionalSaude.setCrmCoren(dto.getCrmCoren());
+            if (dto.getEspecialidade() != null) profissionalSaude.setEspecialidade(dto.getEspecialidade());
+            if (dto.getTelefone() != null) profissionalSaude.setTelefone(dto.getTelefone());
         }
 
         return profissionalSaude;

@@ -1,8 +1,6 @@
 package com.vidaplus.mapper;
 
-import com.vidaplus.dto.LeitoDTO;
 import com.vidaplus.dto.PacienteDTO;
-import com.vidaplus.model.Leito;
 import com.vidaplus.model.Paciente;
 
 import java.time.LocalDateTime;
@@ -13,25 +11,25 @@ public class PacienteMapper {
 
     public static PacienteDTO toDTO(Paciente paciente) {
         PacienteDTO dto = new PacienteDTO();
-        dto.id = paciente.id;
-        dto.nome = paciente.nome;
-        dto.dataNascimento = paciente.dataNascimento;
-        dto.cpf = paciente.cpf;
-        dto.email = paciente.email;
-        dto.telefone = paciente.telefone;
-        dto.criadoEm = paciente.criadoEm;
+        dto.setId(paciente.id);
+        dto.setNome(paciente.getNome());
+        dto.setDataNascimento(paciente.getDataNascimento());
+        dto.setCpf(paciente.getCpf());
+        dto.setEmail(paciente.getEmail());
+        dto.setTelefone(paciente.getTelefone());
+        dto.setCriadoEm(paciente.getCriadoEm());
         return dto;
     }
 
     public static Paciente toEntity(PacienteDTO dto) {
         Paciente paciente = new Paciente();
-        paciente.id = dto.id;
-        paciente.nome = dto.nome;
-        paciente.dataNascimento = dto.dataNascimento;
-        paciente.cpf = dto.cpf;
-        paciente.email = dto.email;
-        paciente.telefone = dto.telefone;
-        paciente.criadoEm = dto.criadoEm != null ? dto.criadoEm : LocalDateTime.now();
+        paciente.id = dto.getId();
+        paciente.setNome(dto.getNome());
+        paciente.setDataNascimento(dto.getDataNascimento());
+        paciente.setCpf(dto.getCpf());
+        paciente.setEmail(dto.getEmail());
+        paciente.setTelefone(dto.getTelefone());
+        paciente.setCriadoEm(dto.getCriadoEm() != null ? dto.getCriadoEm() : LocalDateTime.now());
         return paciente;
     }
 

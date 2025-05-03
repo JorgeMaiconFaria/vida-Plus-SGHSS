@@ -30,14 +30,14 @@ public class AuthResource {
     public Response login(LoginRequest login) {
         Usuario usuario = Usuario.find("email", login.email).firstResult();
 
-        if (usuario == null || !usuario.senha.equals(login.senha)) {
+        if (usuario == null || !usuario.getSenha().equals(login.senha)) {
             return Response.status(Response.Status.UNAUTHORIZED).build();
         }
 
-        Set<String> roles = new HashSet<>(usuario.roles);
+        Set<String> roles = new HashSet<>(usuario.getRoles());
 
         String token = Jwt.issuer("vidaplus-auth")
-                .upn(usuario.email)
+                .upn(usuario.getEmail())
                 .groups(roles)
                 .expiresIn(Duration.ofHours(2))
                 .sign();

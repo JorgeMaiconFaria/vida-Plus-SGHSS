@@ -34,12 +34,12 @@ public class LeitoService {
 
     public Leito atualizar(Long id, LeitoUpdateDTO dto) {
         Leito leito = leitoRepository.findById(id);
+
         if (leito != null) {
-            if (dto.status != null) leito.status = StatusLeito.valueOf(dto.status);
-            if (dto.pacienteId != null) leito.paciente = Paciente.findById(dto.pacienteId);
+            if (dto.getStatus() != null) leito.setStatus(StatusLeito.valueOf(dto.getStatus()));
+            if (dto.getPacienteId() != null) leito.setPaciente(Paciente.findById(dto.getPacienteId()));
         }
 
         return leito;
     }
-
 }

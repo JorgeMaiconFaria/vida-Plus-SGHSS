@@ -10,24 +10,24 @@ public class ConsultaMapper {
 
     public static ConsultaDTO toDTO(Consulta consulta) {
         ConsultaDTO dto = new ConsultaDTO();
-        dto.id = consulta.id;
-        dto.pacienteId = consulta.paciente != null ? consulta.paciente.id : null;
-        dto.profissionalId = consulta.profissional != null ? consulta.profissional.id : null;
-        dto.dataHora = consulta.dataHora;
-        dto.tipo = consulta.tipo != null ? String.valueOf(consulta.tipo) : null;
-        dto.status = consulta.status != null ? String.valueOf(consulta.status) : null;
-        dto.createdAt = consulta.createdAt;
+        dto.setId(consulta.id);
+        dto.setPacienteId(consulta.getPaciente() != null ? consulta.getPaciente().id : null);
+        dto.setProfissionalId(consulta.getProfissional() != null ? consulta.getProfissional().id : null);
+        dto.setDataHora(consulta.getDataHora());
+        dto.setTipo(consulta.getTipo() != null ? String.valueOf(consulta.getTipo()) : null);
+        dto.setStatus(consulta.getStatus() != null ? String.valueOf(consulta.getStatus()) : null);
+        dto.setCreatedAt(consulta.getCreatedAt());
         return dto;
     }
 
     public static Consulta toEntity(ConsultaDTO dto) {
         Consulta consulta = new Consulta();
-        consulta.paciente = dto.pacienteId != null ? Paciente.findById(dto.pacienteId) : null;
-        consulta.profissional = dto.profissionalId != null ? ProfissionalSaude.findById(dto.profissionalId) : null;
-        consulta.dataHora = dto.dataHora;
-        consulta.tipo = dto.tipo != null ? TipoConsulta.valueOf(dto.tipo) : null;
-        consulta.status = dto.status != null ? StatusConsulta.fromString(dto.status) : null;
-        consulta.createdAt = dto.createdAt;
+        consulta.setPaciente(dto.getPacienteId() != null ? Paciente.findById(dto.getPacienteId()) : null);
+        consulta.setProfissional(dto.getProfissionalId() != null ? ProfissionalSaude.findById(dto.getProfissionalId()) : null);
+        consulta.setDataHora(dto.getDataHora());
+        consulta.setTipo(dto.getTipo() != null ? TipoConsulta.valueOf(dto.getTipo()) : null);
+        consulta.setStatus(dto.getStatus() != null ? StatusConsulta.fromString(dto.getStatus()) : null);
+        consulta.setCreatedAt(dto.getCreatedAt());
         return consulta;
     }
 

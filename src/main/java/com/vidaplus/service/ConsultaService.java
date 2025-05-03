@@ -1,6 +1,5 @@
 package com.vidaplus.service;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.vidaplus.dto.ConsutaUpdateDTO;
 import com.vidaplus.model.Consulta;
 import com.vidaplus.model.StatusConsulta;
@@ -34,14 +33,14 @@ public class ConsultaService {
 
     public Consulta atualizarStatus(Long id, ConsutaUpdateDTO dto) {
         Consulta consulta = consultaRepository.findById(id);
-        if (consulta != null && dto.status != null) consulta.status = StatusConsulta.valueOf(dto.status);
+        if (consulta != null && dto.getStatus() != null) consulta.setStatus(StatusConsulta.valueOf(dto.getStatus()));
 
         return consulta;
     }
 
     public Consulta atualizarDataHora(Long id, ConsutaUpdateDTO dto) {
         Consulta consulta = consultaRepository.findById(id);
-        if (consulta != null) consulta.dataHora = dto.dataHora;
+        if (consulta != null) consulta.setDataHora(dto.getDataHora());
 
         return consulta;
     }

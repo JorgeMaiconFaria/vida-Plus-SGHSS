@@ -2,15 +2,19 @@ package com.vidaplus.model;
 
 import io.quarkus.hibernate.orm.panache.PanacheEntity;
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
 
 @Entity
+@Getter
+@Setter
 public class Leito extends PanacheEntity {
     @Column(unique = true)
-    public String numero;
+    private String numero;
 
     @Enumerated(EnumType.STRING)
-    public StatusLeito status;
+    private StatusLeito status;
 
     @ManyToOne
-    public Paciente paciente;
+    private Paciente paciente;
 }

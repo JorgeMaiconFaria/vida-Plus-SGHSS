@@ -1,8 +1,6 @@
 package com.vidaplus.mapper;
 
-import com.vidaplus.dto.LeitoDTO;
 import com.vidaplus.dto.PrescricaoDTO;
-import com.vidaplus.model.Leito;
 import com.vidaplus.model.Paciente;
 import com.vidaplus.model.ProfissionalSaude;
 import com.vidaplus.model.Prescricao;
@@ -13,31 +11,31 @@ import java.util.stream.Collectors;
 public class PrescricaoMapper {
 
     public static Prescricao toEntity(PrescricaoDTO dto) {
-        Prescricao p = new Prescricao();
-        p.id = dto.id;
-        p.medicamento = dto.medicamento;
-        p.posologia = dto.posologia;
-        p.dataHora = dto.dataHora;
+        Prescricao prescricao = new Prescricao();
+        prescricao.id = dto.getId();
+        prescricao.setMedicamento(dto.getMedicamento());
+        prescricao.setPosologia(dto.getPosologia());
+        prescricao.setDataHora(dto.getDataHora());
 
-        if (dto.pacienteId != null) {
-            p.paciente = Paciente.findById(dto.pacienteId);
+        if (dto.getPacienteId() != null) {
+            prescricao.setPaciente(Paciente.findById(dto.getPacienteId()));
         }
 
-        if (dto.profissionalId != null) {
-            p.profissional = ProfissionalSaude.findById(dto.profissionalId);
+        if (dto.getProfissionalId() != null) {
+            prescricao.setProfissional(ProfissionalSaude.findById(dto.getProfissionalId()));
         }
 
-        return p;
+        return prescricao;
     }
 
     public static PrescricaoDTO toDTO(Prescricao p) {
         PrescricaoDTO dto = new PrescricaoDTO();
-        dto.id = p.id;
-        dto.medicamento = p.medicamento;
-        dto.posologia = p.posologia;
-        dto.dataHora = p.dataHora;
-        dto.pacienteId = p.paciente != null ? p.paciente.id : null;
-        dto.profissionalId = p.profissional != null ? p.profissional.id : null;
+        dto.setId(p.id);
+        dto.setMedicamento(p.getMedicamento());
+        dto.setPosologia(p.getPosologia());
+        dto.setDataHora(p.getDataHora());
+        dto.setPacienteId(p.getPaciente() != null ? p.getPaciente().id : null);
+        dto.setProfissionalId(p.getProfissional() != null ? p.getProfissional().id : null);
         return dto;
     }
 

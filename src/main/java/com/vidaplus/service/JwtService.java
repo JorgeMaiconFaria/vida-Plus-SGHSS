@@ -4,7 +4,6 @@ import io.smallrye.jwt.build.Jwt;
 import jakarta.enterprise.context.ApplicationScoped;
 
 import java.time.Duration;
-import java.util.Date;
 
 @ApplicationScoped
 public class JwtService {

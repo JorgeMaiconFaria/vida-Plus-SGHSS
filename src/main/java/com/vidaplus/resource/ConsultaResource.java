@@ -9,6 +9,7 @@ import com.vidaplus.util.DateUtil;
 import io.quarkus.logging.Log;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
+import jakarta.validation.Valid;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
@@ -62,29 +63,29 @@ public class ConsultaResource {
     @PUT
     @Path("/{id}/status")
     @Transactional
-    public Response atualizarStatus(@PathParam("id") Long id, ConsutaUpdateDTO dto) {
+    public Response atualizarStatus(@PathParam("id") Long id, @Valid ConsutaUpdateDTO dto) {
         try {
             Consulta consultaAtualizada = consultaService.atualizarStatus(id, dto);
-            Log.info("Status da consulta ID %d atualizado para %s às %s.".formatted(id, dto.status, DateUtil.format(LocalDateTime.now())));
+            Log.info("Status da consulta ID %d atualizado para %s às %s.".formatted(id, dto.getStatus(), DateUtil.format(LocalDateTime.now())));
             return Response.ok(ConsultaMapper.toDTO(consultaAtualizada)).build();
         } catch (IllegalArgumentException e) {
             Log.error("Erro ao atualizar o status da Consulta: ".concat(e.getMessage()));
-            return Response.status(Response.Status.BAD_REQUEST).entity("Status inválido: " + dto.status).build();
+            return Response.status(Response.Status.BAD_REQUEST).entity("Status inválido: " + dto.getStatus()).build();
         }
     }
 
     @PUT
     @Path("/{id}/data")
     @Transactional
-    public Response atualizarData(@PathParam("id") Long id, ConsutaUpdateDTO dto) {
+    public Response atualizarData(@PathParam("id") Long id, @Valid ConsutaUpdateDTO dto) {
         try {
             Consulta consultaAtualizada = consultaService.atualizarDataHora(id, dto);
-            Log.info("Horário da consulta ID %d atualizado para %s às %s.".formatted(id, DateUtil.format(dto.dataHora), DateUtil.format(LocalDateTime.now())));
+            Log.info("Horário da consulta ID %d atualizado para %s às %s.".formatted(id, DateUtil.format(dto.getDataHora()), DateUtil.format(LocalDateTime.now())));
             return Response.ok(ConsultaMapper.toDTO(consultaAtualizada)).build();
         } catch (Exception e) {
             Log.error("Erro ao atualizar o horário da Consulta: ".concat(e.getMessage()));
             return Response.status(Response.Status.BAD_REQUEST)
-                    .entity("Data e hora inválida: " + dto.dataHora)
+                    .entity("Data e hora inválida: " + dto.getDataHora())
                     .build();
         }
     }

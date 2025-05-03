@@ -9,6 +9,7 @@ import com.vidaplus.util.DateUtil;
 import io.quarkus.logging.Log;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
+import jakarta.validation.Valid;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
@@ -60,7 +61,7 @@ public class LeitoResource {
     @PUT
     @Path("/{id}")
     @Transactional
-    public Response atualizar(@PathParam("id") Long id, LeitoUpdateDTO dto) {
+    public Response atualizar(@PathParam("id") Long id, @Valid LeitoUpdateDTO dto) {
         try {
             Leito leitoAtualizado = leitoService.atualizar(id, dto);
 

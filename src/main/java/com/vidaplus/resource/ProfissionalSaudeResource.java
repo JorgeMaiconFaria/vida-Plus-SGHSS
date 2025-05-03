@@ -9,6 +9,7 @@ import com.vidaplus.util.DateUtil;
 import io.quarkus.logging.Log;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
+import jakarta.validation.Valid;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
@@ -47,36 +48,26 @@ public class ProfissionalSaudeResource {
 
     @POST
     @Transactional
-    public Response salvar(ProfissionalSaudeDTO dto) {
-        try {
+    public Response salvar(@Valid ProfissionalSaudeDTO dto) {
             ProfissionalSaude profissional = ProfissionalSaudeMapper.toEntity(dto);
             profissionalSaudeService.salvar(profissional);
             Log.info("Profissional da saúde ID %d criado com sucesso às %s.".formatted(profissional.id, DateUtil.format(LocalDateTime.now())));
             return Response.status(Response.Status.CREATED).entity(ProfissionalSaudeMapper.toDTO(profissional)).build();
-        } catch (Exception e) {
-            Log.error("Erro ao criar profissional da saúde: %s às %s.".formatted(e.getMessage(), DateUtil.format(LocalDateTime.now())));
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
-        }
     }
 
     @PUT
     @Path("/{id}")
     @Transactional
-    public Response atualizar(@PathParam("id") Long id, ProfissionalSaudeUpdateDTO dto) {
-        try {
-            ProfissionalSaude profissionalAtualizado = profissionalSaudeService.atualizar(id, dto);
+    public Response atualizar(@PathParam("id") Long id, @Valid ProfissionalSaudeUpdateDTO dto) {
+        ProfissionalSaude profissionalAtualizado = profissionalSaudeService.atualizar(id, dto);
 
-            if (profissionalAtualizado != null) {
-                Log.info("Profissional da saúde ID %d atualizado com sucesso às %s.".formatted(id, DateUtil.format(LocalDateTime.now())));
-                return Response.ok(ProfissionalSaudeMapper.toDTO(profissionalAtualizado)).build();
-            }
-
-            Log.error("Profissional da saúde ID %d não encontrado às %s.".formatted(id, DateUtil.format(LocalDateTime.now())));
-            return Response.status(Response.Status.NOT_FOUND).build();
-        } catch (Exception e) {
-            Log.error("Erro ao atualizar profissional da saúde ID %s às %s.".formatted(e.getMessage(), DateUtil.format(LocalDateTime.now())));
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
+        if (profissionalAtualizado != null) {
+            Log.info("Profissional da saúde ID %d atualizado com sucesso às %s.".formatted(id, DateUtil.format(LocalDateTime.now())));
+            return Response.ok(ProfissionalSaudeMapper.toDTO(profissionalAtualizado)).build();
         }
+
+        Log.error("Profissional da saúde ID %d não encontrado às %s.".formatted(id, DateUtil.format(LocalDateTime.now())));
+        return Response.status(Response.Status.NOT_FOUND).build();
     }
 
     @DELETE

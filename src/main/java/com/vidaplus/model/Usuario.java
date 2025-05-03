@@ -2,19 +2,23 @@ package com.vidaplus.model;
 
 import io.quarkus.hibernate.orm.panache.PanacheEntity;
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.util.List;
 
 @Entity
+@Getter
+@Setter
 public class Usuario extends PanacheEntity {
     @Column(unique = true, nullable = false)
-    public String email;
+    private String email;
 
     @Column(nullable = false)
-    public String senha;
+    private String senha;
 
     @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = "usuario_roles", joinColumns = @JoinColumn(name = "usuario_id"))
     @Column(name = "role")
-    public List<String> roles;
+    private List<String> roles;
 }
