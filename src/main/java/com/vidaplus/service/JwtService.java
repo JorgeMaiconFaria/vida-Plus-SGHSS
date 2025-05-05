@@ -9,7 +9,6 @@ import java.time.Duration;
 public class JwtService {
 
     public String gerarToken(String userEmail, String role) {
-        // Criação do token JWT usando a chave privada
         return Jwt.issuer("vidaplus-auth") // Defina o emissor
                 .upn("user-" + userEmail) // Identificador do usuário
                 .groups(role) // Função do usuário

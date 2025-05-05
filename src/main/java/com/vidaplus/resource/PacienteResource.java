@@ -8,8 +8,8 @@ import com.vidaplus.model.Paciente;
 import com.vidaplus.service.PacienteService;
 import com.vidaplus.util.DateUtil;
 import io.quarkus.logging.Log;
+import jakarta.annotation.security.RolesAllowed;
 import jakarta.inject.Inject;
-import jakarta.persistence.PersistenceException;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import jakarta.ws.rs.*;
@@ -18,7 +18,6 @@ import jakarta.ws.rs.core.Response;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Path("/pacientes")
 @Produces(MediaType.APPLICATION_JSON)
@@ -38,7 +37,7 @@ public class PacienteResource {
 
     @GET
     @Path("/{id}")
-    //@RolesAllowed({"ADMIN", "MEDICO"})
+//    @RolesAllowed({"ADMIN", "MEDICO"})
     public Response buscarPorId(@PathParam("id") Long id) {
         Paciente paciente = pacienteService.buscarPorId(id);
         if (paciente != null) {
