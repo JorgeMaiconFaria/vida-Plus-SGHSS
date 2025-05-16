@@ -7,6 +7,7 @@ import com.vidaplus.model.Usuario;
 import com.vidaplus.service.UsuarioService;
 import com.vidaplus.util.DateUtil;
 import io.quarkus.logging.Log;
+import jakarta.annotation.security.RolesAllowed;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
@@ -26,6 +27,7 @@ public class UsuarioResource {
     UsuarioService usuarioService;
 
     @GET
+    @RolesAllowed({"ADMIN"})
     public Response listar(@PathParam("id") Long id) {
         List<Usuario> usuarios = usuarioService.listar();
         Log.info("Listagem de usuários realizada às %s.".formatted(DateUtil.format(LocalDateTime.now())));
@@ -34,6 +36,7 @@ public class UsuarioResource {
 
     @GET
     @Path("/{id}")
+    @RolesAllowed({"ADMIN"})
     public Response buscar(@PathParam("id") Long id) {
         Usuario usuario = usuarioService.buscarPorId(id);
         if (usuario != null) {
@@ -47,6 +50,7 @@ public class UsuarioResource {
 
     @POST
     @Transactional
+    @RolesAllowed({"ADMIN"})
     public Response salvar(@Valid UsuarioDTO usuarioDTO) {
         try {
             Usuario usuario = UsuarioMapper.toEntity(usuarioDTO);
@@ -62,6 +66,7 @@ public class UsuarioResource {
     @PUT
     @Path("/{id}")
     @Transactional
+    @RolesAllowed({"ADMIN"})
     public Response atualizar(@PathParam("id") Long id, UsuarioUpdateDTO dto) {
         try {
             Usuario usuarioAtualizado = usuarioService.atualizar(id, dto);
@@ -81,7 +86,15 @@ public class UsuarioResource {
     @DELETE
     @Path("/{id}")
     @Transactional
+    @RolesAllowed({"ADMIN"})
     public Response deletar(@PathParam("id") Long id) {
+        Usuario usuario = usuarioService.buscarPorId(id);
+
+        if (usuario == null) {
+            Log.error("Usuário ID %d não encontrado às %s.".formatted(id, DateUtil.format(LocalDateTime.now())));
+            return Response.status(Response.Status.NOT_FOUND).entity("Usuário ID %d não encontrado.".formatted(id)).build();
+        }
+
         usuarioService.deletar(id);
         Log.warn("Usuário ID %d deletado às %s.".formatted(id, DateUtil.format(LocalDateTime.now())));
         return Response.noContent().build();

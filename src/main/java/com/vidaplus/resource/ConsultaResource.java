@@ -7,6 +7,7 @@ import com.vidaplus.model.Consulta;
 import com.vidaplus.service.ConsultaService;
 import com.vidaplus.util.DateUtil;
 import io.quarkus.logging.Log;
+import jakarta.annotation.security.RolesAllowed;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
@@ -27,6 +28,7 @@ public class ConsultaResource {
     ConsultaService consultaService;
 
     @GET
+    @RolesAllowed({"ADMIN", "PROFISSIONAL"})
     public List<ConsultaDTO> listar() {
         List<Consulta> consultas = consultaService.listar();
         Log.info("Listagem de consultas realizada às %s.".formatted(DateUtil.format(LocalDateTime.now())));
@@ -35,6 +37,7 @@ public class ConsultaResource {
 
     @GET
     @Path("/{id}")
+    @RolesAllowed({"ADMIN", "PROFISSIONAL"})
     public Response buscarPorId(@PathParam("id") Long id) {
         Consulta consulta = consultaService.buscarPorId(id);
         if (consulta != null) {
@@ -48,6 +51,7 @@ public class ConsultaResource {
 
     @POST
     @Transactional
+    @RolesAllowed({"ADMIN"})
     public Response salvar(ConsultaDTO dto) {
         try{
             Consulta consulta = ConsultaMapper.toEntity(dto);
@@ -63,6 +67,7 @@ public class ConsultaResource {
     @PUT
     @Path("/{id}/status")
     @Transactional
+    @RolesAllowed({"ADMIN", "PROFISSIONAL"})
     public Response atualizarStatus(@PathParam("id") Long id, @Valid ConsutaUpdateDTO dto) {
         try {
             Consulta consultaAtualizada = consultaService.atualizarStatus(id, dto);
@@ -77,6 +82,7 @@ public class ConsultaResource {
     @PUT
     @Path("/{id}/data")
     @Transactional
+    @RolesAllowed({"ADMIN", "PROFISSIONAL"})
     public Response atualizarData(@PathParam("id") Long id, @Valid ConsutaUpdateDTO dto) {
         try {
             Consulta consultaAtualizada = consultaService.atualizarDataHora(id, dto);
@@ -93,7 +99,15 @@ public class ConsultaResource {
     @DELETE
     @Path("/{id}")
     @Transactional
+    @RolesAllowed({"ADMIN", "PROFISSIONAL"})
     public Response deletar(@PathParam("id") Long id) {
+        Consulta consulta = consultaService.buscarPorId(id);
+
+        if (consulta == null) {
+            Log.error("Consulta ID %d não encontrada às %s.".formatted(id, DateUtil.format(LocalDateTime.now())));
+            return Response.status(Response.Status.NOT_FOUND).entity("Consulta ID %d não encontrada.".formatted(id)).build();
+        }
+
         consultaService.deletar(id);
         Log.warn("Consulta ID %d deletada às %s.".formatted(id, DateUtil.format(LocalDateTime.now())));
         return Response.noContent().build();

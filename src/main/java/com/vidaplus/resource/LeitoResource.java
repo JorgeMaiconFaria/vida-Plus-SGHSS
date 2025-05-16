@@ -7,6 +7,7 @@ import com.vidaplus.model.Leito;
 import com.vidaplus.service.LeitoService;
 import com.vidaplus.util.DateUtil;
 import io.quarkus.logging.Log;
+import jakarta.annotation.security.RolesAllowed;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
@@ -26,6 +27,7 @@ public class LeitoResource {
     LeitoService leitoService;
 
     @GET
+    @RolesAllowed({"ADMIN", "PROFISSIONAL"})
     public List<LeitoDTO> listar() {
         List<Leito> leitos = leitoService.listar();
         Log.info("Listagem de leitos realizada às %s.".formatted(DateUtil.format(LocalDateTime.now())));
@@ -34,6 +36,7 @@ public class LeitoResource {
 
     @GET
     @Path("/{id}")
+    @RolesAllowed({"ADMIN", "PROFISSIONAL"})
     public Response buscarPorId(@PathParam("id") Long id) {
         Leito leito = leitoService.buscarPorId(id);
         if (leito != null){
@@ -46,6 +49,7 @@ public class LeitoResource {
 
     @POST
     @Transactional
+    @RolesAllowed({"ADMIN"})
     public Response salvar(LeitoDTO dto) {
         try {
             Leito leito = LeitoMapper.toEntity(dto);
@@ -61,6 +65,7 @@ public class LeitoResource {
     @PUT
     @Path("/{id}")
     @Transactional
+    @RolesAllowed({"ADMIN", "PROFISSIONAL"})
     public Response atualizar(@PathParam("id") Long id, @Valid LeitoUpdateDTO dto) {
         try {
             Leito leitoAtualizado = leitoService.atualizar(id, dto);
@@ -81,7 +86,15 @@ public class LeitoResource {
     @DELETE
     @Path("/{id}")
     @Transactional
+    @RolesAllowed({"ADMIN"})
     public Response deletar(@PathParam("id") Long id) {
+        Leito leito = leitoService.buscarPorId(id);
+
+        if (leito == null) {
+            Log.error("Leito ID %d não encontrado às %s.".formatted(id, DateUtil.format(LocalDateTime.now())));
+            return Response.status(Response.Status.NOT_FOUND).entity("Leito ID %d não encontrado.".formatted(id)).build();
+        }
+
         leitoService.deletar(id);
         Log.warn("Leito ID %d deletado às %s.".formatted(id, DateUtil.format(LocalDateTime.now())));
         return Response.noContent().build();

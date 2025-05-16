@@ -7,6 +7,7 @@ import com.vidaplus.model.Prescricao;
 import com.vidaplus.service.PrescricaoService;
 import com.vidaplus.util.DateUtil;
 import io.quarkus.logging.Log;
+import jakarta.annotation.security.RolesAllowed;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
 import jakarta.ws.rs.*;
@@ -25,6 +26,7 @@ public class PrescricaoResource {
     PrescricaoService prescricaoService;
 
     @GET
+    @RolesAllowed({"ADMIN", "PROFISSIONAL"})
     public List<PrescricaoDTO> listar() {
         List<Prescricao> prescricoes = prescricaoService.listar();
         Log.info("Listagem de prescrições realizada às %s.".formatted(DateUtil.format(LocalDateTime.now())));
@@ -33,6 +35,7 @@ public class PrescricaoResource {
 
     @GET
     @Path("/{id}")
+    @RolesAllowed({"ADMIN", "PROFISSIONAL"})
     public Response buscarPorId(@PathParam("id") Long id) {
         Prescricao prescricao = prescricaoService.buscarPorId(id);
 
@@ -46,6 +49,7 @@ public class PrescricaoResource {
 
     @POST
     @Transactional
+    @RolesAllowed({"ADMIN", "PROFISSIONAL"})
     public Response salvar(PrescricaoDTO dto) {
         try {
             Prescricao prescricao = PrescricaoMapper.toEntity(dto);
@@ -61,6 +65,7 @@ public class PrescricaoResource {
     @PUT
     @Path("/{id}")
     @Transactional
+    @RolesAllowed({"ADMIN", "PROFISSIONAL"})
     public Response atualizar(@PathParam("id") Long id, PrescricaoUpdateDTO dto) {
         Prescricao prescricao = prescricaoService.atualizar(id, dto);
 
@@ -76,7 +81,15 @@ public class PrescricaoResource {
     @DELETE
     @Path("/{id}")
     @Transactional
+    @RolesAllowed({"ADMIN", "PROFISSIONAL"})
     public Response deletar(@PathParam("id") Long id) {
+        Prescricao prescricao = prescricaoService.buscarPorId(id);
+
+        if (prescricao == null) {
+            Log.error("Prescrição ID %d não encontrada às %s.".formatted(id, DateUtil.format(LocalDateTime.now())));
+            return Response.status(Response.Status.NOT_FOUND).entity("Prescrição ID %d não encontrada.".formatted(id)).build();
+        }
+
         prescricaoService.deletar(id);
         Log.warn("Prescrição ID %d deletada às %s.".formatted(id, DateUtil.format(LocalDateTime.now())));
         return Response.noContent().build();

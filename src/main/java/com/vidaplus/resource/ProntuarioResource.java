@@ -2,10 +2,12 @@ package com.vidaplus.resource;
 
 import com.vidaplus.dto.ProntuarioDTO;
 import com.vidaplus.mapper.ProntuarioMapper;
+import com.vidaplus.model.ProfissionalSaude;
 import com.vidaplus.model.Prontuario;
 import com.vidaplus.service.ProntuarioService;
 import com.vidaplus.util.DateUtil;
 import io.quarkus.logging.Log;
+import jakarta.annotation.security.RolesAllowed;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
 import jakarta.ws.rs.*;
@@ -24,6 +26,7 @@ public class ProntuarioResource {
     ProntuarioService prontuarioService;
 
     @GET
+    @RolesAllowed({"ADMIN", "PROFISSIONAL"})
     public List<ProntuarioDTO> listar() {
         List<Prontuario> prontuarios = prontuarioService.listar();
         Log.info("Listagem de prontuários realizada às %s.".formatted(DateUtil.format(LocalDateTime.now())));
@@ -32,6 +35,7 @@ public class ProntuarioResource {
 
     @GET
     @Path("/{id}")
+    @RolesAllowed({"ADMIN", "PROFISSIONAL"})
     public Response buscar(@PathParam("id") Long id) {
         Prontuario prontuario = prontuarioService.buscarPorId(id);
         if (prontuario != null) {
@@ -45,6 +49,7 @@ public class ProntuarioResource {
 
     @POST
     @Transactional
+    @RolesAllowed({"ADMIN", "PROFISSIONAL"})
     public Response salvar(ProntuarioDTO dto) {
         try{
             Prontuario prontuario = ProntuarioMapper.toEntity(dto);
@@ -60,6 +65,7 @@ public class ProntuarioResource {
     @PUT
     @Path("/{id}")
     @Transactional
+    @RolesAllowed({"ADMIN", "PROFISSIONAL"})
     public Response atualizar(@PathParam("id") Long id, ProntuarioDTO dto) {
         try {
             Prontuario prontuario = Prontuario.findById(id);
@@ -80,7 +86,15 @@ public class ProntuarioResource {
     @DELETE
     @Path("/{id}")
     @Transactional
+    @RolesAllowed({"ADMIN"})
     public Response deletar(@PathParam("id") Long id) {
+        Prontuario prontuario = prontuarioService.buscarPorId(id);
+
+        if (prontuario == null) {
+            Log.error("Prontuário ID %d não encontrado às %s.".formatted(id, DateUtil.format(LocalDateTime.now())));
+            return Response.status(Response.Status.NOT_FOUND).entity("Prontuário ID %d não encontrado.".formatted(id)).build();
+        }
+
         prontuarioService.deletar(id);
         Log.warn("Paciente ID %d deletado às %s.".formatted(id, DateUtil.format(LocalDateTime.now())));
         return Response.noContent().build();

@@ -28,7 +28,7 @@ public class PacienteResource {
     PacienteService pacienteService;
 
     @GET
-    //@RolesAllowed("ADMIN")
+    @RolesAllowed({"ADMIN", "PROFISSIONAL"})
     public List<PacienteDTO> listarTodos() {
         List<Paciente> pacientes = pacienteService.listar();
         Log.info("Listagem de pacientes realizada às %s.".formatted(DateUtil.format(LocalDateTime.now())));
@@ -37,7 +37,7 @@ public class PacienteResource {
 
     @GET
     @Path("/{id}")
-//    @RolesAllowed({"ADMIN", "MEDICO"})
+    @RolesAllowed({"ADMIN", "PROFISSIONAL"})
     public Response buscarPorId(@PathParam("id") Long id) {
         Paciente paciente = pacienteService.buscarPorId(id);
         if (paciente != null) {
@@ -51,7 +51,7 @@ public class PacienteResource {
 
     @POST
     @Transactional
-    //@RolesAllowed("ADMIN")
+    @RolesAllowed("ADMIN")
     public Response salvar(@Valid PacienteDTO dto) {
         Paciente paciente = PacienteMapper.toEntity(dto);
         pacienteService.salvar(paciente);
@@ -62,7 +62,7 @@ public class PacienteResource {
     @PUT
     @Path("/{id}")
     @Transactional
-    //@RolesAllowed("ADMIN")
+    @RolesAllowed("ADMIN")
     public Response atualizar(@PathParam("id") Long id,@Valid PacienteUpdateDTO dto) {
         Paciente pacienteAtualizado = pacienteService.atualizar(id, dto);
         if (pacienteAtualizado != null) {
@@ -77,7 +77,15 @@ public class PacienteResource {
     @DELETE
     @Path("/{id}")
     @Transactional
+    @RolesAllowed("ADMIN")
     public Response deletar(@PathParam("id") Long id) {
+        Paciente paciente = pacienteService.buscarPorId(id);
+
+        if (paciente == null) {
+            Log.error("Paciente ID %d não encontrado às %s.".formatted(id, DateUtil.format(LocalDateTime.now())));
+            return Response.status(Response.Status.NOT_FOUND).entity("Paciente ID %d não encontrado.".formatted(id)).build();
+        }
+
         pacienteService.deletar(id);
         Log.warn("Paciente ID %d deletado às %s.".formatted(id, DateUtil.format(LocalDateTime.now())));
         return Response.noContent().build();
