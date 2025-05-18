@@ -2,27 +2,27 @@ package com.vidaplus.model;
 
 import io.quarkus.hibernate.orm.panache.PanacheEntity;
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.time.LocalDateTime;
 
 @Entity
+@Getter
+@Setter
 public class Consulta extends PanacheEntity {
     @ManyToOne
-    public Paciente paciente;
+    private Paciente paciente;
 
     @ManyToOne
-    public ProfissionalSaude profissional;
-
-    public LocalDateTime dataHora;
-
-    @Enumerated(EnumType.STRING)
-    public TipoConsulta tipo;
+    private ProfissionalSaude profissional;
+    private LocalDateTime dataHora;
 
     @Enumerated(EnumType.STRING)
-    public StatusConsulta status;
+    private TipoConsulta tipo;
 
-    public LocalDateTime createdAt = LocalDateTime.now();
+    @Enumerated(EnumType.STRING)
+    private StatusConsulta status;
 
-    public enum TipoConsulta { PRESENCIAL, TELEMEDICINA }
-    public enum StatusConsulta { AGENDADA, REALIZADA, CANCELADA }
+    private LocalDateTime createdAt = LocalDateTime.now();
 }

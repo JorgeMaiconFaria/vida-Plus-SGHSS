@@ -1,6 +1,8 @@
 package com.vidaplus.service;
 
+import com.vidaplus.dto.ConsutaUpdateDTO;
 import com.vidaplus.model.Consulta;
+import com.vidaplus.model.StatusConsulta;
 import com.vidaplus.repository.ConsultaRepository;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
@@ -13,7 +15,7 @@ public class ConsultaService {
     @Inject
     ConsultaRepository consultaRepository;
 
-    public List<Consulta> listarTodas() {
+    public List<Consulta> listar() {
         return consultaRepository.listAll();
     }
 
@@ -29,11 +31,18 @@ public class ConsultaService {
         consultaRepository.deleteById(id);
     }
 
-    public void atualizarStatus(Long id, Consulta.StatusConsulta novoStatus) {
+    public Consulta atualizarStatus(Long id, ConsutaUpdateDTO dto) {
         Consulta consulta = consultaRepository.findById(id);
-        if (consulta != null) {
-            consulta.status = novoStatus;
-        }
+        if (consulta != null && dto.getStatus() != null) consulta.setStatus(StatusConsulta.valueOf(dto.getStatus()));
+
+        return consulta;
+    }
+
+    public Consulta atualizarDataHora(Long id, ConsutaUpdateDTO dto) {
+        Consulta consulta = consultaRepository.findById(id);
+        if (consulta != null) consulta.setDataHora(dto.getDataHora());
+
+        return consulta;
     }
 }
 

@@ -1,12 +1,21 @@
 package com.vidaplus.resource;
 
+import com.vidaplus.dto.LeitoDTO;
+import com.vidaplus.dto.LeitoUpdateDTO;
+import com.vidaplus.mapper.LeitoMapper;
 import com.vidaplus.model.Leito;
 import com.vidaplus.service.LeitoService;
+import com.vidaplus.util.DateUtil;
+import io.quarkus.logging.Log;
+import jakarta.annotation.security.RolesAllowed;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
+import jakarta.validation.Valid;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
+
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Path("/leitos")
@@ -18,62 +27,76 @@ public class LeitoResource {
     LeitoService leitoService;
 
     @GET
-    public List<Leito> listarTodos() {
-        return leitoService.listarTodos();
+    @RolesAllowed({"ADMIN", "PROFISSIONAL"})
+    public List<LeitoDTO> listar() {
+        List<Leito> leitos = leitoService.listar();
+        Log.info("Listagem de leitos realizada às %s.".formatted(DateUtil.format(LocalDateTime.now())));
+        return LeitoMapper.toDTOList(leitos);
     }
 
     @GET
     @Path("/{id}")
+    @RolesAllowed({"ADMIN", "PROFISSIONAL"})
     public Response buscarPorId(@PathParam("id") Long id) {
         Leito leito = leitoService.buscarPorId(id);
-        if (leito != null) {
-            return Response.ok(leito).build();
-        } else {
-            return Response.status(Response.Status.NOT_FOUND).build();
+        if (leito != null){
+            Log.info("Leito ID %d buscado às %s..".formatted(id, DateUtil.format(LocalDateTime.now())));
+            return Response.ok(LeitoMapper.toDTO(leito)).build();
         }
+        Log.error("Leito ID %d não encontrado às %s.".formatted(id, DateUtil.format(LocalDateTime.now())));
+        return Response.status(Response.Status.NOT_FOUND).build();
     }
 
     @POST
     @Transactional
-    public Response salvar(Leito leito) {
-        leitoService.salvar(leito);
-        return Response.status(Response.Status.CREATED).entity(leito).build();
+    @RolesAllowed({"ADMIN"})
+    public Response salvar(LeitoDTO dto) {
+        try {
+            Leito leito = LeitoMapper.toEntity(dto);
+            leitoService.salvar(leito);
+            Log.info("Leito ID %d criado com sucesso às %s.".formatted(leito.id, DateUtil.format(LocalDateTime.now())));
+            return Response.status(Response.Status.CREATED).entity(LeitoMapper.toDTO(leito)).build();
+        } catch (Exception e) {
+            Log.error("Erro ao criar leito: %s às %s.".formatted(e.getMessage(), DateUtil.format(LocalDateTime.now())));
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
+        }
     }
 
     @PUT
     @Path("/{id}")
     @Transactional
-    public Response atualizar(@PathParam("id") Long id, Leito atualizado) {
-        Leito existente = leitoService.buscarPorId(id);
-        if (existente != null) {
-            existente.numero = atualizado.numero;
-            existente.status = atualizado.status;
-            return Response.ok(existente).build();
-        } else {
-            return Response.status(Response.Status.NOT_FOUND).build();
-        }
-    }
-
-    @PUT
-    @Path("/{id}/status")
-    @Transactional
-    public Response atualizarStatus(@PathParam("id") Long id, String novoStatus) {
+    @RolesAllowed({"ADMIN", "PROFISSIONAL"})
+    public Response atualizar(@PathParam("id") Long id, @Valid LeitoUpdateDTO dto) {
         try {
-            Leito.StatusLeito status = Leito.StatusLeito.valueOf(novoStatus.toUpperCase());
-            leitoService.atualizarStatus(id, status);
-            return Response.ok().build();
-        } catch (IllegalArgumentException e) {
-            return Response.status(Response.Status.BAD_REQUEST)
-                    .entity("Status inválido: " + novoStatus)
-                    .build();
+            Leito leitoAtualizado = leitoService.atualizar(id, dto);
+
+            if (leitoAtualizado == null) {
+                Log.error("Leito ID %d não encontrado às %s.".formatted(id, DateUtil.format(LocalDateTime.now())));
+                return Response.status(Response.Status.NOT_FOUND).build();
+            }
+
+            Log.info("Leito ID %d atualizado com sucesso às %s.".formatted(id, DateUtil.format(LocalDateTime.now())));
+            return Response.ok(LeitoMapper.toDTO(leitoAtualizado)).build();
+        } catch (Exception e) {
+            Log.error("Erro ao atualizar leito ID %s às %s.".formatted(e.getMessage(), DateUtil.format(LocalDateTime.now())));
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
         }
     }
 
     @DELETE
     @Path("/{id}")
     @Transactional
+    @RolesAllowed({"ADMIN"})
     public Response deletar(@PathParam("id") Long id) {
+        Leito leito = leitoService.buscarPorId(id);
+
+        if (leito == null) {
+            Log.error("Leito ID %d não encontrado às %s.".formatted(id, DateUtil.format(LocalDateTime.now())));
+            return Response.status(Response.Status.NOT_FOUND).entity("Leito ID %d não encontrado.".formatted(id)).build();
+        }
+
         leitoService.deletar(id);
+        Log.warn("Leito ID %d deletado às %s.".formatted(id, DateUtil.format(LocalDateTime.now())));
         return Response.noContent().build();
     }
 }
