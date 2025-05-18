@@ -6,5 +6,4 @@ import jakarta.enterprise.context.ApplicationScoped;
 
 @ApplicationScoped
 public class PacienteRepository implements PanacheRepository<Paciente> {
-    // Métodos customizados podem ser adicionados aqui, se necessário
 }

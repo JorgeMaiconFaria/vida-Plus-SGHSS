@@ -1,79 +1,75 @@
-# vida-Plus-SGHSS
+# Vida Plus SGHSS
 Trabalho da Faculdade referente ao estudo de caso da empresa fictícia VidaPlus.
-This project uses Quarkus, the Supersonic Subatomic Java Framework.
 
-If you want to learn more about Quarkus, please visit its website: <https://quarkus.io/>.
-
-## Running the application in dev mode
-
-You can run your application in dev mode that enables live coding using:
+## Rodar a aplicação no modo desenvolvedor
 
 ```shell script
 ./mvnw quarkus:dev
 ```
 
-> **_NOTE:_**  Quarkus now ships with a Dev UI, which is available in dev mode only at <http://localhost:8080/q/dev/>.
+> **_NOTA:_**  Acesse a interface do desenvolvedor no link: <http://localhost:8080/q/dev/>.
 
-## Packaging and running the application
+## Empacotando e executando a aplicação
 
-The application can be packaged using:
+A aplicação pode ser empacotada utilizando o comando:
 
 ```shell script
 ./mvnw package
 ```
 
-It produces the `quarkus-run.jar` file in the `target/quarkus-app/` directory.
-Be aware that it’s not an _über-jar_ as the dependencies are copied into the `target/quarkus-app/lib/` directory.
+Esse comando gera o arquivo `quarkus-run.jar` dentro do diretório `target/quarkus-app/`.
+Atenção: esse não é um _über-jar_ ,pois as dependências são copiadas para o diretório `target/quarkus-app/lib/`.
 
-The application is now runnable using `java -jar target/quarkus-app/quarkus-run.jar`.
+A aplicação pode ser executada com `java -jar target/quarkus-app/quarkus-run.jar`.
 
-If you want to build an _über-jar_, execute the following command:
+Se você quiser gerar um _über-jar_, execute o seguinte comando:
 
 ```shell script
 ./mvnw package -Dquarkus.package.jar.type=uber-jar
 ```
 
-The application, packaged as an _über-jar_, is now runnable using `java -jar target/*-runner.jar`.
+A aplicação, empacotada como um  _über-jar_, pode ser executada com `java -jar target/*-runner.jar`.
 
-## Creating a native executable
+## Criando um executável nativo
 
-You can create a native executable using:
+Você pode criar um executável nativo utilizando:
 
 ```shell script
 ./mvnw package -Dnative
 ```
 
-Or, if you don't have GraalVM installed, you can run the native executable build in a container using:
+Ou, se você não tiver o GraalVM instalado, pode construir o executável nativo em um contêiner com:
 
 ```shell script
 ./mvnw package -Dnative -Dquarkus.native.container-build=true
 ```
 
-You can then execute your native executable with: `./target/gestao-hospitalar-1.0.0-SNAPSHOT-runner`
+Depois disso, o executável nativo pode ser executado com: `./target/gestao-hospitalar-1.0.0-SNAPSHOT-runner`
 
-If you want to learn more about building native executables, please consult <https://quarkus.io/guides/maven-tooling>.
+Se quiser aprender mais sobre como criar executáveis nativos, consulte <https://quarkus.io/guides/maven-tooling>.
 
-## Related Guides
+## Testando a aplicação
+A execução para testes funciona perfeitamente apenas iniciando a aplicação no modo desenvolvedor, como mencionado a cima,
+ sem a necessidade de empacotar a aplicação.
 
-- Flyway ([guide](https://quarkus.io/guides/flyway)): Handle your database schema migrations
-- SmallRye OpenAPI ([guide](https://quarkus.io/guides/openapi-swaggerui)): Document your REST APIs with OpenAPI - comes with Swagger UI
-- Elytron Security JDBC ([guide](https://quarkus.io/guides/security-jdbc)): Secure your applications with username/password stored in a database
-- Hibernate ORM with Panache ([guide](https://quarkus.io/guides/hibernate-orm-panache)): Simplify your persistence code for Hibernate ORM via the active record or the repository pattern
-- JDBC Driver - MySQL ([guide](https://quarkus.io/guides/datasource)): Connect to the MySQL database via JDBC
+Esse projeto foi desenvolvido com o sistema de autenticação baseada em tokens JWT e controle de acesso por papéis,
+por isso, a aplicação cria um usuário administrador para ser possível acessar os endpoints.
 
-## Provided Code
+As credenciais desse usuário são: "email": "admin@admin.com",
+"senha": "admin123"
 
-### Hibernate ORM
+O banco de dados usado foi o MySQL, a aplicação tentará criar as tabelas usadas na aplicação ao inicia-lá.
+Por favor, certifique-se que o usuário e senha do banco de dados da máquina cuja aplicação irá ser iniciada sejam iguais 
+aos apresentado no arquivo `application.properties` no seguinte caminho: `src/main/resources/META-INF.resources`.
 
-Create your first JPA entity
+Usuário e senha vigentes no arquivo:
+`quarkus.datasource.username=${DB_USER:root} 
+quarkus.datasource.password=${DB_PASSWORD:root}`
 
-[Related guide section...](https://quarkus.io/guides/hibernate-orm)
+Neste caso, o usuário e senha padrão são root.
 
-[Related Hibernate with Panache section...](https://quarkus.io/guides/hibernate-orm-panache)
+Se sua máquina conter variáveis de ambiente configuradas para o usuário e senha do banco de dados não é necessária essa configuração. 
+Em caso de divergencia, por favor, altere as configurações para que possa ser possível o teste da aplicação.
 
-
-### RESTEasy JAX-RS
-
-Easily start your RESTful Web Services
-
-[Related guide section...](https://quarkus.io/guides/getting-started#the-jax-rs-resources)
+Juntamento com os arquivos do projeto estão a documentação dos endpoints e um arquivo JSON com os testes prontos para 
+importar no Postman.
