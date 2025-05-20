@@ -60,16 +60,16 @@ As credenciais desse usuário são: "email": "admin@admin.com",
 
 O banco de dados usado foi o MySQL, a aplicação tentará criar as tabelas usadas na aplicação ao inicia-lá.
 Por favor, certifique-se que o usuário e senha do banco de dados da máquina cuja aplicação irá ser iniciada sejam iguais 
-aos apresentado no arquivo `application.properties` no seguinte caminho: `src/main/resources/META-INF.resources`.
+aos apresentados no arquivo `application.properties` no seguinte caminho: `src/main/resources/META-INF.resources`.
 
-Usuário e senha vigentes no arquivo:
+Usuário e a senha vigentes no arquivo:
 `quarkus.datasource.username=${DB_USER:root} 
 quarkus.datasource.password=${DB_PASSWORD:root}`
 
 Neste caso, o usuário e senha padrão são root.
 
-Se sua máquina conter variáveis de ambiente configuradas para o usuário e senha do banco de dados não é necessária essa configuração. 
-Em caso de divergencia, por favor, altere as configurações para que possa ser possível o teste da aplicação.
+Se sua máquina contiver variáveis de ambiente configuradas para o usuário e senha do banco de dados não é necessária essa configuração. 
+Em caso de divergência, por favor, altere as configurações para poder ser possível o teste da aplicação.
 
-Juntamento com os arquivos do projeto estão a documentação dos endpoints e um arquivo JSON com os testes prontos para 
+Juntamente com os arquivos do projeto estão a documentação dos endpoints e um arquivo JSON com os testes prontos para 
 importar no Postman.
